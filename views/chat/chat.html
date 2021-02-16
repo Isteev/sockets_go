@@ -85,6 +85,7 @@
       new URLSearchParams(window.location.search).forEach((value) => {
         $('#userName').append(value)
         name = value;
+        socket.emit("notice", "HA INGRESADO A LA SALA", name );
       });
       socket.on("reply", function (msg) {
         $("#messages").append($("<li>").text(msg));
