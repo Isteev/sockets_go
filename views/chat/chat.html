@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font: 13px Helvetica, Arial;
+      }
+      form {
+        background: #000;
+        padding: 3px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+      form input {
+        border: 0;
+        padding: 10px;
+        width: 90%;
+        margin-right: 0.5%;
+      }
+      form button {
+        width: 9%;
+        background: rgb(130, 224, 255);
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      #exit {
+        border-radius: 10px;
+        border: none;
+        background: rgb(252, 77, 77);
+        padding: 5px;
+        cursor: pointer;
+        color: #000;
+        text-decoration: none;
+      }
+
+      div {
+        display: grid;
+        grid-auto-flow: column;
+        justify-items: right;
+        margin-right: 10px;
+        margin-top: 10px;
+      }
+
+      #userName{
+        font-size: 30px;
+        font-weight: 500;
+      }
+
+      #messages {
+        list-style-type: none;
+        margin: 20px;
+        padding: 0;
+      }
+      #messages li {
+        padding: 5px 10px;
+      }
+      #messages li:nth-child(odd) {
+        background: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+        <p id="userName"></p>
+        <a href="/index.html" id="exit" onclick="exit()"> Salir </a>
+    </div>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" placeholder="Message"/><button>Send</button>
+    </form>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      // socket.emit('msg', 'hello');
+      var name = "";
+      new URLSearchParams(window.location.search).forEach((value) => {
+        $('#userName').append(value)
+        name = value;
+      });
+      socket.on("reply", function (msg) {
+        $("#messages").append($("<li>").text(msg));
+      });
+      $("form").submit(function () {
+        socket.emit("notice", $("#m").val(), name);
+        $("#m").val("");
+        return false;
+      });
+      function exit(){
+        socket.emit("notice", "HA SALIDO DE LA SALA", name );
+        socket.emit("bye", name)
+      }
+    </script>
+  </body>
+</html>
